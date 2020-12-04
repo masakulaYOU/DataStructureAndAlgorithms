@@ -9,7 +9,7 @@ package DataStructure.List;
  *
  * */
 
-public class _ArrayList<AnyType> implements java.util.Iterator<AnyType>{
+public class _ArrayList<AnyType> implements Iterable<AnyType> {
     private  static final int DEFAULT_CAPACITY = 10;    // 默认容量
     private int theSize;    // 大小
     private AnyType[] theItems; // 项数组
@@ -59,6 +59,42 @@ public class _ArrayList<AnyType> implements java.util.Iterator<AnyType>{
     }
 
     public void add(int idx, AnyType x) {
+        if(theItems.length == size())
+            ensureCapacity(size() * 2 + 1);
+        for(int i = theSize; i > idx; i--)
+            theItems[i] = theItems[i - 1];
+        theItems[idx] = x;
 
+        theSize++;
+    }
+
+    public AnyType remove(int idx) {
+        AnyType removedItem = theItems[idx];
+        for(int i = idx; i < size() - 1; i++)
+            theItems[i] = theItems[i + 1];
+
+        theSize--;
+        return removedItem;
+    }
+
+    public java.util.Iterator<AnyType> iterator() {
+        return new ArrayListIterator();
+    }
+
+    private class ArrayListIterator implements java.util.Iterator<AnyType> {
+        private int current = 0;
+
+        public boolean hasNext() { return current < size(); }
+
+        public AnyType next() {
+            if(!hasNext())
+                throw new java.util.NoSuchElementException();
+
+            return theItems[current++];
+        }
+
+        public void remove() {
+            _ArrayList.this.remove(--current);
+        }
     }
 }
